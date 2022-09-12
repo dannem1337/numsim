@@ -20,26 +20,30 @@ def ode(t,y):
     yder[1]=-4*y[1]-3*y[0]
     return yder
 
-# Här börjar Euler
-def euler(fun, h, end):
-    t = np.arange(0, 1 + h, end)
-    s0 = 0 # begynnelsevillkor
-    s = np.zeros(len(t))
-    s[0] = s0
-    
-    for i in range(0, len(t) - 1):
-        s[i + 1] = s[i] + h*fun(t[i], s[i])
-    
-    return s
+
+def euler(f,tspan,u0,dt):
+    interval=round((tspan[1]-tspan[0])/dt)
+    tvec=np.linspace(tspan[0],tspan[1],interval+1)
+    u=np.zeros((len(tvec),len(u0)))
+    i=0
+    u[i,:]=u0
+    for t in tvec[0:len(tvec)-1]:
+        k=f(t,u[i,:])
+        u[i+1,:]=u[i,:]+dt*k
+        i+=1
+    return tvec, u
+
 
 # Initialvillkor
 Theta1_0, Theta2_0 = np.pi/10, np.pi/10
 p1_0, p2_0 = 0, 0
 S_0 = (Theta1_0, Theta2_0, p1_0, p2_0)
 x = np.linspace(0,10, 106)
+tspan = [0, 10]
+dt = 0.1
 
 # sol = solve_ivp(dSdt, t_span=[0, 10], y0=S_0)
-sol = euler(dSdt, 0.1, 1)
+sol = euler(dSdt, tspan, S_0, dt)
 
 Theta1_sol = sol.t[0]
 Theta2_sol = sol.t[1]
