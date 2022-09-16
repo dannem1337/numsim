@@ -70,7 +70,7 @@ Theta1_0, Theta2_0 = np.pi/10, np.pi/10
 p1_0, p2_0 = 0, 0
 S_0 = [Theta1_0, Theta2_0, p1_0, p2_0]
 tspan = [0, 10]
-dt = 0.1
+dt = 0.01
 
 #sol = solve_ivp(dSdt, t_span=[0, 100], y0=S_0)
 tvec, y = euler1(dSdt, tspan, S_0, dt)
@@ -88,6 +88,9 @@ print(y[:,0])
 # vinklar
 plt.plot(tvec,y[:,0], 'r')
 plt.plot(tvec,y[:,1], 'b')
+
+
+
 
 # # rörelsemängd
 #plt.plot(tvec,y[:,2], 'y')
