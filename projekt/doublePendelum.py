@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
+import typing
 
 g = 9.81
 m = 1
@@ -8,10 +9,11 @@ l = 1
 
 def dSdt(t, S):
     Theta1, Theta2, p1, p2 = S 
-    Theta1dt = (6/m*l**2)*((2*p1-3*np.cos(Theta1 - Theta2)*p2)/(16-9*np.cos(Theta1-Theta2)**2))
-    Theta2dt = (6/m*l**2)*((8*p2-3*np.cos(Theta1 - Theta2)*p1)/(16-9*np.cos(Theta1-Theta2)**2))
-    p1dt = ((-1/2)*m*l**2)*(Theta1dt*Theta2dt*np.sin(Theta1-Theta2)+3*(g/l)*np.sin(Theta1))
-    p2dt = ((-1/2)*m*l**2)*(-Theta1dt*Theta2dt*np.sin(Theta1-Theta2)+(g/l)*np.sin(Theta2))
+    #arr = np.array([0,0,0,0])
+    Theta1dt = (6/(m*l**2))*((2*p1-3*np.cos(Theta1 - Theta2)*p2)/(16-9*np.cos(Theta1-Theta2)**2))
+    Theta2dt = (6/(m*l**2))*((8*p2-3*np.cos(Theta1 - Theta2)*p1)/(16-9*np.cos(Theta1-Theta2)**2))
+    p1dt = ((-1/2)*(m*l**2))*((Theta1dt*Theta2dt*np.sin(Theta1-Theta2))+3*(g/l)*(np.sin(Theta1)))
+    p2dt = ((-1/2)*(m*l**2))*(-(Theta1dt*Theta2dt*np.sin(Theta1-Theta2))+(g/l)*(np.sin(Theta2)))
     return [Theta1dt, Theta2dt, p1dt, p2dt]
 
 def ode(t,y):
@@ -27,37 +29,58 @@ def euler(f,tspan,u0,dt):
     u=np.zeros((len(tvec),len(u0)))
     i=0
     u[i,:]=u0
+    # theta1arr = np.zeros(len(tvec))
+    # theta2arr = np.zeros(len(tvec))
+    # p1arr = np.zeros(len(tvec))
+    # p2arr = np.zeros(len(tvec))
     for t in tvec[0:len(tvec)-1]:
-        k=f(t,u[i,:])
-        u[i+1,:]=u[i,:]+dt*k
+        k = f(t,u[i,:])
+        # theta1arr[i+1] = theta1arr[i] + dt*k[0]
+        # theta2arr[i+1] = theta2arr[i] + dt*k[1]
+        # p1arr[i+1] = p1arr[i] + dt*k[2]        
+        # p2arr[i+1] = p2arr[i] + dt*k[3]
+        u[i+1, 0] = u[i,0]+dt*k[0]
+        u[i+1, 1] = u[i,1]+dt*k[1]
+        u[i+1, 2] = u[i,2]+dt*k[2]
+        u[i+1, 3] = u[i,3]+dt*k[3]
+
+
+        # u[i+1,1]=u[i,1]+dt*k[1]
+        # u[i+1,2]=u[i,2]+dt*k[2]
+        # u[i+1,3]=u[i,3]+dt*k[3]
+
+
         i+=1
+
     return tvec, u
 
 
 # Initialvillkor
 Theta1_0, Theta2_0 = np.pi/10, np.pi/10
 p1_0, p2_0 = 0, 0
-S_0 = (Theta1_0, Theta2_0, p1_0, p2_0)
-x = np.linspace(0,10, 106)
+S_0 = [Theta1_0, Theta2_0, p1_0, p2_0]
 tspan = [0, 10]
 dt = 0.1
 
-# sol = solve_ivp(dSdt, t_span=[0, 10], y0=S_0)
-sol = euler(dSdt, tspan, S_0, dt)
+#sol = solve_ivp(dSdt, t_span=[0, 100], y0=S_0)
+tvec, y = euler(dSdt, tspan, S_0, dt)
 
-Theta1_sol = sol.t[0]
-Theta2_sol = sol.t[1]
-p1_sol = sol.t[2]
-p2_sol = sol.t[3]
+    
 
 
-# vinklar
-plt.plot(sol.t,sol.y[0], 'r')
-plt.plot(sol.t,sol.y[1], 'b')
+# Theta1_sol = sol.t[0]
+# Theta2_sol = sol.t[1]
+# p1_sol = sol.t[2]
+# p2_sol = sol.t[3]
 
-# rörelsemängd
-plt.plot(sol.t,sol.y[2], 'y')
-plt.plot(sol.t,sol.y[3], 'g')
+
+# # vinklar
+# plt.plot(sol.t,sol.y[0], 'r')
+# plt.plot(sol.t,sol.y[1], 'b')
+
+# # rörelsemängd
+# plt.plot(sol.t,sol.y[2], 'y')
+# plt.plot(sol.t,sol.y[3], 'g')
 
 plt.show()
 
