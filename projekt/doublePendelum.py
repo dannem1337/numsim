@@ -68,6 +68,7 @@ Theta1_0, Theta2_0 = np.pi/10, np.pi/10
 p1_0, p2_0 = 0, 0
 S_0 = [Theta1_0, Theta2_0, p1_0, p2_0]
 tspan = [0, 10]
+
 dt = 0.01
 
 #sol = solve_ivp(dSdt, t_span=[0, 100], y0=S_0)
@@ -80,15 +81,50 @@ tvec, y = RK4(dSdt, tspan, S_0, dt)
 # p2_sol = sol.t[3]
 
 # # Unpack z and theta as a function of time
-theta1, theta2 = y[:,0], y[:,2]
+theta1, theta2 = y[:,0], y[:,1]
 
- # vinklar
-plt.plot(tvec,y[:,0], 'r')
-plt.plot(tvec,y[:,1], 'b')
+history_len = 500  # how many trajectory points to display
 
-# rörelsemängd
-plt.plot(tvec,y[:,2], 'y')
-plt.plot(tvec,y[:,3], 'g')
+# Convert to Cartesian coordinates of the two bob positions.
+x1 = l * np.sin(theta1)
+y1 = -l * np.cos(theta1)
+x2 = x1 + l * np.sin(theta2)
+y2 = y1 - l * np.cos(theta2)
+
+
+
+
+fig = plt.figure()
+ax = fig.add_subplot(autoscale_on=False, xlim=(-l-l, l+l), ylim=(-l-l, 1.)) 
+ax.set_aspect('equal')
+ax.grid()
+
+line, = ax.plot([], [], 'o-', lw=2)
+trace, = ax.plot([], [], '.-', lw=1, ms=2)
+time_template = 'time = %.1fs'
+time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
+history_x, history_y = deque(maxlen=history_len), deque(maxlen=history_len)
+
+
+def animate(i):
+    thisx = [0, x1[i], x2[i]]
+    thisy = [0, y1[i], y2[i]]
+
+    if i == 0:
+        history_x.clear()
+        history_y.clear()
+
+    history_x.appendleft(thisx[2])
+    history_y.appendleft(thisy[2])
+
+    line.set_data(thisx, thisy)
+    trace.set_data(history_x, history_y)
+    time_text.set_text(time_template % (i*dt))
+    return line, trace, time_text
+
+
+ani = animation.FuncAnimation(
+    fig, animate, len(y), interval=dt*1000, blit=True)
 
 plt.show()
 
@@ -166,4 +202,4 @@ plt.show()
 # plt.plot(tvec,y[:,2], 'y')
 # plt.plot(tvec,y[:,3], 'g')
 
-# plt.show()
+#
