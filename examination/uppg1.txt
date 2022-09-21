@@ -1,0 +1,6 @@
+Uppgift 1
+
+Vi ser att til höger har jämn linje som går neråt och det är då diskreteringsfelet som dominerar medan den kaotiska linjen som är tll vänster är avrundningsfelet som dominerar. Diskreteringsfelet 
+är då för stora h och innebär det matematiska feler som finns i funktionen medan avrundningsfelet är för små h och innebär det numeriska felet som sker. Vi ser också att vid
+h = -52 så blir linjen helt rak. Det är för att vi då når maskinepsilon så 1.0 + 2^-52 = 1.0. Diskreteringsfelet har den största betydelsen men eftersom det felet ändras linjärt 
+så kan vi ha det i åtanke. Men vid tex kancellation har även avrundningsfelet betydelse och eftersom det felet beter sig kaotiskt innebär det att vi aldrig kan få en exakt lösning för en ODE.
