@@ -27,12 +27,6 @@ def dSdt(t, S):
     return arr
 
 
-def ode(t, y):
-    yder = [0, 0]
-    yder[0] = y[1]
-    yder[1] = -4*y[1]-3*y[0]
-    return yder
-
 # ------------- SOLVERS ----------------
 
 # Euler
@@ -67,7 +61,7 @@ def RK4(fun, tspan, u0, dt):
 
 
 # Initialvillkor
-Theta1_0, Theta2_0 = np.pi/10, np.pi/10
+Theta1_0, Theta2_0 = np.pi/2, np.pi/2
 p1_0, p2_0 = 0, 0
 S_0 = [Theta1_0, Theta2_0, p1_0, p2_0]
 tspan = [0, 10]
@@ -75,15 +69,15 @@ dt = 0.01
 
 # -------- CALL SOLVERS --------
 sol = solve_ivp(dSdt, t_span=[0, 10], y0=S_0)
-tvec1, y = euler(dSdt, tspan, S_0, dt)
-tvec, u = RK4(dSdt, tspan, S_0, dt)
+# tvec1, y = euler(dSdt, tspan, S_0, dt)
+tvec, y = RK4(dSdt, tspan, S_0, dt)
 
 
 # -------- SIMULATION --------
 # Unpack z and theta as a function of time
 theta1, theta2 = y[:, 0], y[:, 1]
 
-history_len = 500  # how many trajectory points to display
+history_len = 1000  # how many trajectory points to display
 
 # Convert to Cartesian coordinates of the two bob positions.
 x1 = l * np.sin(theta1)
@@ -98,8 +92,6 @@ ax.grid()
 
 line, = ax.plot([], [], 'o-', lw=2)
 trace, = ax.plot([], [], '.-', lw=1, ms=2)
-time_template = 'time = %.1fs'
-time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
 history_x, history_y = deque(maxlen=history_len), deque(maxlen=history_len)
 
 
@@ -116,8 +108,7 @@ def animate(i):
 
     line.set_data(thisx, thisy)
     trace.set_data(history_x, history_y)
-    time_text.set_text(time_template % (i*dt))
-    return line, trace, time_text
+    return line, trace 
 
 
 ani = animation.FuncAnimation(
