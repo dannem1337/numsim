@@ -46,7 +46,7 @@ H_0 = [S_0, I_0, R_0]
 
 
 
-######## stokiometri-matrisen(stochiometry matrix) ##########
+######## stokastiska simuleringar  ##########
 
 # Reaktioner
 # r1 = beta*(I/N)
@@ -55,26 +55,25 @@ H_0 = [S_0, I_0, R_0]
 # koefficienter
 coeff = [beta*(I_0/N)*S_0, gamma*I_0]
 
-# matris
+# stokiometri-matris
 def stochEpidemic():
     M=np.array([[-1, 1, 0],\
                 [0, -1, 1]])
     return M
 
+# propensitetsfunktioner
 def propEpidemic(X, coeff):
     beta = coeff[0]
     gamma = coeff[1]
     w = np.array([beta*(X[1]/N)*X[0], gamma*X[1]])
     return w
 
-t,X = gillespie.SSA(propEpidemic, stochEpidemic, H_0, tspan, coeff)
+t, X = gillespie.SSA(propEpidemic, stochEpidemic, H_0, tspan, coeff)
 
 # plottning
 plt.plot()
-plt.plot(t,X[:,0],'y-')
-plt.plot(t,X[:,1],'r-')
-plt.plot(t,X[:,2],'g-')
-plt.legend(['Mottagliga','Infekterade', 'Immuna'])
+plt.plot(t ,X[:,0], 'y-')
+plt.plot(t ,X[:,1], 'r-')
+plt.plot(t ,X[:,2], 'g-')
+plt.legend (['Mottagliga', 'Infekterade', 'Immuna'])
 plt.show()
-
-######## ropensitetsfunktionerna (propensities) ############
