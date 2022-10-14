@@ -32,9 +32,9 @@ sol = solve_ivp(SIR, t_span=tspan, y0=X0)
 
 ## PLOTTNING
 plt.plot()
-plt.plot(sol.t, sol.y[0], 'y')   # S - Mottagliga
-plt.plot(sol.t, sol.y[1], 'r')   # I - Infekterade
-plt.plot(sol.t, sol.y[2], 'g')   # R - Immuna
+# plt.plot(sol.t, sol.y[0], 'y')   # S - Mottagliga
+# plt.plot(sol.t, sol.y[1], 'r')   # I - Infekterade
+# plt.plot(sol.t, sol.y[2], 'g')   # R - Immuna
 
 
 ######## Stokastiska simuleringar  ##########
@@ -59,12 +59,18 @@ def propEpidemic(X, coeff):
     w = np.array([beta*(X[1]/N)*X[0], gamma*X[1]])
     return w
 
-t, X = gillespie.SSA(propEpidemic, stochEpidemic, X0, tspan, coeff)
+def plot():
+    t, X = gillespie.SSA(propEpidemic, stochEpidemic, X0, tspan, coeff)
 
-## PLOTTNING
-plt.plot(t, X[:,0], 'y-')       # S - Mottagliga
-plt.plot(t, X[:,1], 'r-')       # I - Infekterade
-plt.plot(t, X[:,2], 'g-')       # R - Immuna
+    ## PLOTTNING
+    plt.plot(t, X[:,0], 'y-')       # S - Mottagliga
+    plt.plot(t, X[:,1], 'r-')       # I - Infekterade
+    plt.plot(t, X[:,2], 'g-')       # R - Immuna
+    return
+
+# plotta 5 ggr
+for i in range(5):
+        plot()
 
 plt.xlabel("$Days$")
 plt.ylabel("$Population$")
