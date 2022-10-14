@@ -69,7 +69,7 @@ def plot():
     return
 
 # plotta 5 ggr
-for i in range(5):
+for i in range(20):
         plot()
 
 plt.xlabel("$Days$")

@@ -9,19 +9,22 @@ import gillespie
 # S - Mottagliga
 # I - Infekterade
 # R - Immuna
+# D - Döda
 N = 1000                    # population
-beta = 0.3                  # exponerade/dagar
-gamma = 1/7                 # tillfrisknade/dagar
+beta = 0.3                  # exponerade/dag
+gamma = 1/7                 # tillfrisknade/dag
 alfa = 1/5.1                # 1/alpha = inkubationstiden
+my = 0.008                  # döda/dag
 
 ## ODE
-def SEIR(t, X):
-    S, E, I, R = X
-    arr = np.zeros(4)
+def SEIRD(t, X):
+    S, E, I, R, D = X
+    arr = np.zeros(5)
     arr[0] = -(beta*(I/N)*S)         # S Mottagliga
     arr[1] = (beta*(I/N)*S) - alfa*E # E Exponerad
-    arr[2] = alfa*E - gamma*I        # I infekterad
+    arr[2] = alfa*E - gamma*I - my*I # I infekterad
     arr[3] = gamma*I                 # R Tillfrisknad
+    arr[4] =  my*I                   # D Döda
     return arr
 
 ## INITIALVILLKOR 
@@ -30,15 +33,17 @@ S0 = 995                   # Mottagliga vid tid 0
 E0 = 0                     # Exponerade vid tid 0
 I0 = 5                     # Smittade vid tid 0
 R0 = 0                     # Immuna vid tid 0
-X0 = [S0, E0, I0, R0]
-sol = solve_ivp(SEIR, t_span=tspan, y0=X0)
+D0 = 0                     # Döda vid tid 0
+X0 = [S0, E0, I0, R0, D0]
+sol = solve_ivp(SEIRD, t_span=tspan, y0=X0)
 
 ## PLOTTNING
 plt.plot()
-# plt.plot(sol.t, sol.y[0], 'y')   # S - Mottagliga
-# plt.plot(sol.t, sol.y[1], 'b')   # E - Exponerade
-# plt.plot(sol.t, sol.y[2], 'r')   # I - Infekterade
-# plt.plot(sol.t, sol.y[3], 'g')   # R - Immuna
+plt.plot(sol.t, sol.y[0], 'y')   # S - Mottagliga
+plt.plot(sol.t, sol.y[1], 'b')   # E - Exponerade
+plt.plot(sol.t, sol.y[2], 'r')   # I - Infekterade
+plt.plot(sol.t, sol.y[3], 'g')   # R - Immuna
+plt.plot(sol.t, sol.y[4], 'black')   # D - Döda
 
 
 ######## Stokastiska simuleringar  ##########
@@ -47,15 +52,17 @@ plt.plot()
 # r1 = beta*(I/N)
 # r2 = gamma*I
 # r3 = alfa*E
+# r3 = my*I
 
 ## KOEFFICIENTER
-coeff = [alfa, beta, gamma]
+coeff = [alfa, beta, gamma, my]
 
 ## STOKEMETRI-MATRIS
 def stochEpidemic():
-    m = np.array([[-1, 1, 0, 0],\
-                  [0, 0, -1, 1],\
-                  [0, -1, 1, 0]
+    m = np.array([[-1, 1, 0, 0, 0],\
+                  [0, 0, -1, 1, 0],\
+                  [0, -1, 1, 0, 0],\
+                  [0, 0, -1, 0, 1]
                   ])
     return m
 
@@ -64,7 +71,8 @@ def propEpidemic(X, coeff):
     alfa = coeff[0]
     beta = coeff[1]
     gamma = coeff[2]
-    w = np.array([beta*(X[2]/N)*X[0], gamma*X[2], alfa*X[1]])
+    my = coeff[3]
+    w = np.array([beta*(X[2]/N)*X[0], gamma*X[2], alfa*X[1], my*X[2]])
     return w
 
 def plot():
@@ -75,13 +83,15 @@ def plot():
     plt.plot(t, X[:,1], 'b-')       # E - Exposed
     plt.plot(t, X[:,2], 'r-')       # I - Infekterade
     plt.plot(t, X[:,3], 'g-')       # R - Immuna
+    plt.plot(t, X[:,4], 'black')   # D - Döda
     return
 
-# plotta 5 ggr
-for i in range(20):
+plotta 5 ggr
+for i in range(100):
     plot()
+
 
 plt.xlabel("$Days$")
 plt.ylabel("$Population$")
-plt.legend (['Mottagliga', 'Exponerade', 'Infekterade', 'Immuna'])
+plt.legend (['Mottagliga', 'Exponerade', 'Infekterade', 'Immuna', 'Döda'])
 plt.show()
