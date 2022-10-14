@@ -37,20 +37,20 @@ plt.plot(sol.t, sol.y[1], 'r')   # I - Infekterade
 plt.plot(sol.t, sol.y[2], 'g')   # R - Immuna
 
 
-######## stokastiska simuleringar  ##########
+######## Stokastiska simuleringar  ##########
 
 ## REAKTIONER
 # r1 = beta*(I/N)
 # r2 = gamma*I
 
 ## KOEFFICIENTER
-coeff = [beta*(I0/N)*S0, gamma*I0]
+coeff = [beta, gamma]
 
 ## STOKEMETRI-MATRIS
 def stochEpidemic():
-    M=np.array([[-1, 1, 0],\
-                [0, -1, 1]])
-    return M
+    m = np.array([[-1, 1, 0],\
+                  [0, -1, 1]])
+    return m
 
 ## PROPENSITETSMATRIS
 def propEpidemic(X, coeff):
@@ -62,9 +62,9 @@ def propEpidemic(X, coeff):
 t, X = gillespie.SSA(propEpidemic, stochEpidemic, X0, tspan, coeff)
 
 ## PLOTTNING
-plt.plot(t ,X[:,0], 'y-')       # S - Mottagliga
-plt.plot(t ,X[:,1], 'r-')       # I - Infekterade
-plt.plot(t ,X[:,2], 'g-')       # R - Immuna
+plt.plot(t, X[:,0], 'y-')       # S - Mottagliga
+plt.plot(t, X[:,1], 'r-')       # I - Infekterade
+plt.plot(t, X[:,2], 'g-')       # R - Immuna
 
 plt.xlabel("$Days$")
 plt.ylabel("$Population$")
