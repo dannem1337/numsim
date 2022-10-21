@@ -69,8 +69,14 @@ def plot():
     return
 
 # plotta 5 ggr
-for i in range(20):
-        plot()
+for i in range(5):
+    t, X = gillespie.SSA(propEpidemic, stochEpidemic, X0, tspan, coeff)
+
+    ## PLOTTNING
+    plt.plot(t, X[:,0], 'y-')       # S - Mottagliga
+    plt.plot(t, X[:,1], 'r-')       # I - Infekterade
+    plt.plot(t, X[:,2], 'g-')       # R - Immuna
+    
 
 plt.xlabel("$Days$")
 plt.ylabel("$Population$")
